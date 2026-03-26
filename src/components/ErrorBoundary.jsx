@@ -1,4 +1,5 @@
 import React from 'react'
+import { supabase } from '../lib/supabase'
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -22,7 +23,6 @@ export default class ErrorBoundary extends React.Component {
     
     try {
       // Log to Supabase for tracking
-      const { supabase } = await import('../lib/supabase')
       await supabase.from('error_logs').insert([{
         message: error?.message || 'Unknown error',
         stack: error?.stack || '',

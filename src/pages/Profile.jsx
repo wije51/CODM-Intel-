@@ -19,6 +19,13 @@ export default function Profile() {
   }, [profile])
 
   const handleGoogleLogin = async () => {
+    // Check if configuration is missing
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
+    if (supabaseUrl.includes('placeholder')) {
+      alert("⚠️ CONFIGURATION ERROR: Supabase environment variables are missing. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your project settings.")
+      return
+    }
+
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
