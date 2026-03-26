@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect, lazy, Suspense } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { supabase } from './lib/supabase'
 import { useStore } from './store/useStore'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -11,6 +12,7 @@ const Chat = lazy(() => import('./pages/Chat'))
 const Profile = lazy(() => import('./pages/Profile'))
 const Loadouts = lazy(() => import('./pages/Loadouts'))
 const AIAgent = lazy(() => import('./pages/AIAgent'))
+const SetupProfile = lazy(() => import('./pages/SetupProfile'))
 
 // Loading fallback
 function PageLoader() {
@@ -24,6 +26,26 @@ function PageLoader() {
   )
 }
 
+function AppRoutes() {
+  const location = useLocation()
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/loadouts" element={<Loadouts />} />
+          <Route path="/ai" element={<AIAgent />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/setup-profile" element={<SetupProfile />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  )
+}
+
 function App() {
   const { setSession, setProfile } = useStore()
 
@@ -31,22 +53,40 @@ function App() {
     // Initial session check
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
-      if (session) fetchProfile(session.user.id)
-    }).catch(err => console.error("Supabase config not found or invalid"))
+      if (session) {
+        fetchProfile(session.user.id)
+      } else {
+        setProfile(null)
+      }
+    }).catch(err => {
+      console.error("Supabase config not found or invalid")
+      setProfile(null)
+    })
 
     // Listen to changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
-      if (session) fetchProfile(session.user.id)
+      if (session) {
+        fetchProfile(session.user.id)
+      } else {
+        setProfile(null)
+      }
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
   const fetchProfile = async (userId) => {
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single()
-    if (!error && data) {
-      setProfile(data)
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single()
+      if (!error && data) {
+        setProfile(data)
+      } else {
+        setProfile(null)
+      }
+    } catch (err) {
+      console.error("Error fetching profile:", err)
+      setProfile(null)
     }
   }
 
@@ -54,16 +94,7 @@ function App() {
     <ErrorBoundary>
       <Router>
         <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route element={<AppLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/loadouts" element={<Loadouts />} />
-              <Route path="/ai" element={<AIAgent />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-          </Routes>
+          <AppRoutes />
         </Suspense>
       </Router>
     </ErrorBoundary>

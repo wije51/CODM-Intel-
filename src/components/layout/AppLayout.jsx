@@ -1,12 +1,21 @@
-import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useStore } from '../../store/useStore'
 import { supabase } from '../../lib/supabase'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 
 export default function AppLayout() {
-  const { session } = useStore()
+  const { session, profile, isLoadingProfile } = useStore()
   const location = useLocation()
+  const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Redirect to setup if logged in but no profile
+  useEffect(() => {
+    if (!isLoadingProfile && session && !profile && location.pathname !== '/setup-profile') {
+      navigate('/setup-profile', { replace: true })
+    }
+  }, [session, profile, isLoadingProfile, location.pathname, navigate])
 
   // Close menu on route change
   useEffect(() => {
@@ -16,6 +25,12 @@ export default function AppLayout() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setMenuOpen(false)
+  }
+
+  const buttonHover = {
+    scale: 1.05,
+    boxShadow: "0 0 15px rgba(0, 255, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.1)",
+    transition: { duration: 0.2 }
   }
 
   const isActive = (path) => location.pathname === path
@@ -46,17 +61,20 @@ export default function AppLayout() {
             {session ? (
               <>
                 {navLink('/profile', 'HQ_PROFILE')}
-                <button 
+                <motion.button 
+                  whileHover={buttonHover}
                   onClick={handleLogout}
-                  className="px-4 py-1.5 rounded bg-gunmetal-light border border-gunmetal hover:border-red-500/50 hover:text-red-400 hover:shadow-[0_0_10px_rgba(239,68,68,0.2)] transition-all duration-300 ml-2 text-sm font-bold tracking-wide"
+                  className="px-4 py-1.5 rounded bg-gunmetal-light border border-gunmetal hover:border-red-500/50 hover:text-red-400 transition-all duration-300 ml-2 text-sm font-bold tracking-wide"
                 >
                   DISCONNECT
-                </button>
+                </motion.button>
               </>
             ) : (
-              <Link to="/profile" className="px-5 py-2 rounded bg-gold text-gunmetal-dark font-bold hover:bg-gold-light hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all duration-300 transform hover:scale-105">
-                ENLIST NOW
-              </Link>
+              <motion.div whileHover={buttonHover}>
+                <Link to="/profile" className="px-5 py-2 rounded bg-gold text-gunmetal-dark font-bold block">
+                  ENLIST NOW
+                </Link>
+              </motion.div>
             )}
           </div>
 

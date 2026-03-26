@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { aiLimiter } from '../lib/security'
+import MotionWrapper from '../components/common/MotionWrapper'
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null
@@ -81,10 +82,14 @@ export default function AIAgent() {
     setIsThinking(false)
   }
 
+  const buttonHover = {
+    scale: 1.05,
+    boxShadow: "0 0 20px rgba(0, 255, 255, 0.4), 0 0 40px rgba(0, 255, 255, 0.2)",
+    transition: { duration: 0.2 }
+  }
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+    <MotionWrapper
       className="flex flex-col h-[calc(100vh-140px)] md:h-[75vh] bg-gunmetal-light/90 backdrop-blur-md border border-gunmetal-dark rounded-xl overflow-hidden shadow-2xl relative"
     >
       <div className="bg-[#181C20] p-3 md:p-4 border-b border-gold/20 flex justify-between items-center z-10">
@@ -153,17 +158,18 @@ export default function AIAgent() {
             className="flex-1 min-w-0 bg-gunmetal border border-gunmetal-dark focus:border-gold/50 rounded-lg py-3 px-3 md:px-6 text-gray-100 focus:outline-none focus:ring-1 focus:ring-gold/30 transition-all shadow-inner disabled:opacity-50 font-mono text-xs md:text-sm"
             autoComplete="off"
           />
-          <button
+          <motion.button
+            whileHover={buttonHover}
             type="submit"
             disabled={isThinking || !input.trim()}
-            className="px-4 md:px-6 py-3 bg-gold text-gunmetal-dark font-black rounded-lg hover:bg-gold-light transition-all disabled:opacity-50 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] tracking-wider text-xs md:text-sm shrink-0"
+            className="px-4 md:px-6 py-3 bg-gold text-gunmetal-dark font-black rounded-lg hover:bg-gold-light transition-all disabled:opacity-50 tracking-wider text-xs md:text-sm shrink-0"
           >
             ASK
-          </button>
+          </motion.button>
         </div>
       </form>
 
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-20"></div>
-    </motion.div>
+    </MotionWrapper>
   )
 }

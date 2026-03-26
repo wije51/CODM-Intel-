@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useStore } from '../store/useStore'
 import { moderateMessage } from '../lib/moderation'
 import { sanitizeInput, chatLimiter } from '../lib/security'
+import MotionWrapper from '../components/common/MotionWrapper'
 
 export default function Chat() {
   const { session, profile } = useStore()
@@ -90,7 +91,7 @@ export default function Chat() {
         { 
           user_id: session.user.id, 
           content: cleanText,
-          username: profile?.username || 'Operator'
+          username: profile?.username || 'NEWBIE'
         }
       ])
 
@@ -104,9 +105,7 @@ export default function Chat() {
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+    <MotionWrapper 
       className="flex flex-col h-[calc(100vh-140px)] md:h-[75vh] bg-gunmetal-light/90 backdrop-blur-md border border-gunmetal-dark rounded-xl overflow-hidden shadow-2xl relative"
     >
       <div className="bg-[#181C20] p-3 md:p-4 border-b border-gold/20 flex justify-between items-center z-10">
@@ -134,7 +133,7 @@ export default function Chat() {
               className={`flex flex-col max-w-[85%] md:max-w-[80%] ${msg.user_id === session?.user?.id ? 'self-end items-end' : 'self-start items-start'}`}
             >
               <span className="text-[10px] md:text-xs text-gold-dark font-mono mb-1 px-1">
-                {msg.username || 'Operator'} 
+                {(msg.username === 'Operator' || !msg.username) ? 'NEWBIE' : msg.username} 
               </span>
               <div className={`p-2.5 md:p-3 rounded-lg text-xs md:text-sm break-words ${msg.user_id === session?.user?.id ? 'bg-gold text-gunmetal-dark' : 'bg-gunmetal border border-gunmetal-dark text-gray-200'}`}>
                 {msg.content}
@@ -177,6 +176,6 @@ export default function Chat() {
       
       {/* Background glitch/scanline effect */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none opacity-20"></div>
-    </motion.div>
+    </MotionWrapper>
   )
 }

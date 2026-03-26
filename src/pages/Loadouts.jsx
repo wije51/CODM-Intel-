@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { useStore } from '../store/useStore'
+import MotionWrapper from '../components/common/MotionWrapper'
 
 const WEAPON_CATEGORIES = {
   'Assault Rifles': ['M13', 'Kilo 141', 'Man-O-War', 'DR-H', 'AK-47', 'Type 25', 'ICR-1', 'ASM10', 'M4', 'HBRa3', 'BK57', 'LK24', 'Peacekeeper MK2', 'CR-56 AMAX', 'FR .556', 'Oden', 'Krig 6', 'EM2'],
@@ -70,19 +71,26 @@ export default function Loadouts() {
     setIsSaving(false)
   }
 
+  const buttonHover = {
+    scale: 1.05,
+    boxShadow: "0 0 20px rgba(0, 255, 255, 0.4), 0 0 40px rgba(0, 255, 255, 0.2)",
+    transition: { duration: 0.2 }
+  }
+
   return (
-    <div className="space-y-6">
+    <MotionWrapper className="space-y-6">
       <div className="flex items-end justify-between border-b border-gold/20 pb-4">
         <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold to-white tracking-widest">
           LOADOUT ARMORY
         </h2>
         {session && (
-          <button
+          <motion.button
+            whileHover={buttonHover}
             onClick={() => setShowCreator(!showCreator)}
-            className="px-5 py-2.5 rounded bg-gold text-gunmetal-dark font-black tracking-wider hover:bg-gold-light hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all duration-300 text-sm"
+            className="px-5 py-2.5 rounded bg-gold text-gunmetal-dark font-black tracking-wider hover:bg-gold-light transition-all duration-300 text-sm"
           >
             {showCreator ? '✕ CLOSE' : '+ NEW LOADOUT'}
-          </button>
+          </motion.button>
         )}
       </div>
 
@@ -147,10 +155,14 @@ export default function Loadouts() {
                 placeholder="Why this build is good for ranked..." />
             </div>
 
-            <button onClick={saveLoadout} disabled={isSaving}
-              className="w-full py-3.5 bg-gold text-gunmetal-dark font-black tracking-widest rounded hover:bg-gold-light transition-all duration-300 disabled:opacity-50 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] border-b-4 border-gold-dark hover:border-b-2">
+            <motion.button 
+              whileHover={buttonHover}
+              onClick={saveLoadout} 
+              disabled={isSaving}
+              className="w-full py-3.5 bg-gold text-gunmetal-dark font-black tracking-widest rounded hover:bg-gold-light transition-all duration-300 disabled:opacity-50 border-b-4 border-gold-dark hover:border-b-2"
+            >
               {isSaving ? 'DEPLOYING...' : 'DEPLOY LOADOUT'}
-            </button>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -194,6 +206,6 @@ export default function Loadouts() {
           })
         )}
       </div>
-    </div>
+    </MotionWrapper>
   )
 }

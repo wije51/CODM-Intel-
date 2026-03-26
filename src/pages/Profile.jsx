@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore'
 import { supabase } from '../lib/supabase'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import MotionWrapper from '../components/common/MotionWrapper'
 
 export default function Profile() {
   const { session, profile, setProfile, gamingUid } = useStore()
@@ -56,6 +57,12 @@ export default function Profile() {
     setLoading(false)
   }
 
+  const buttonHover = {
+    scale: 1.05,
+    boxShadow: "0 0 20px rgba(0, 255, 255, 0.4), 0 0 40px rgba(0, 255, 255, 0.2)",
+    transition: { duration: 0.2 }
+  }
+
   if (!session) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
@@ -84,11 +91,7 @@ export default function Profile() {
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="max-w-2xl w-full mx-auto"
-    >
+    <MotionWrapper className="max-w-2xl w-full mx-auto">
       <div className="flex items-end justify-between border-b border-gold/20 pb-4 mb-6">
         <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold to-white tracking-widest">
           HQ PROFILE
@@ -125,14 +128,15 @@ export default function Profile() {
           <p className="text-xs text-gray-500 mt-2 font-mono">Required for automated rank synchronization.</p>
         </div>
         
-        <button 
+        <motion.button 
+          whileHover={buttonHover}
           onClick={saveProfile}
           disabled={loading}
           className="w-full py-4 mt-6 bg-gold text-gunmetal-dark font-black tracking-widest rounded text-lg hover:bg-gold-light transition-all duration-300 disabled:opacity-50 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] border-b-4 border-gold-dark hover:border-b-2 hover:-translate-y-[2px]"
         >
           {loading ? 'SYNCING DATA...' : 'ENCRYPT & SAVE'}
-        </button>
+        </motion.button>
       </div>
-    </motion.div>
+    </MotionWrapper>
   )
 }
