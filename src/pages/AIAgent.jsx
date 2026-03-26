@@ -60,7 +60,7 @@ export default function AIAgent() {
 
     try {
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-2.5-flash",
+        model: "gemini-1.5-flash",
         systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }
       })
       const chat = model.startChat({
@@ -76,7 +76,11 @@ export default function AIAgent() {
       const response = result.response.text()
       setMessages(prev => [...prev, { role: 'ai', content: response }])
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'ai', content: `⚠️ Comms Error: ${err.message}` }])
+      if (err.message?.includes('429') || err.message?.includes('quota')) {
+        setMessages(prev => [...prev, { role: 'ai', content: "⚠️ SYSTEM OVERLOAD: Daily AI Intel quota exceeded. Please wait for the daily reset or contact HQ." }])
+      } else {
+        setMessages(prev => [...prev, { role: 'ai', content: `⚠️ Comms Error: ${err.message}` }])
+      }
     }
 
     setIsThinking(false)
