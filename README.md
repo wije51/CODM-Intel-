@@ -1,16 +1,55 @@
-# React + Vite
+# ⚡ CODM Intel - Tactical Social Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to **CODM Intel**, the ultimate social hub for Call of Duty Mobile players. Built for performance, security, and elite tactical advantage.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **💬 World Chat**: Real-time global communication with active auto-moderation.
+- **🤖 AI Gaming Assistant**: Gemini-powered tactical intel. Ask about loadouts, maps, and strategies.
+- **🔫 Loadout Armory**: Share and discover elite weapon builds with the community.
+- **👤 Elite Profiles**: Secure Google authentication and gaming UID tracking.
+- **🛡️ Security First**: Integrated XSS protection and rate limiting to prevent spam.
+- **📱 Fully Responsive**: Optimized for both high-end desktop and mobile devices.
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React + Vite + Tailwind CSS
+- **Backend & Auth**: Supabase (Postgres & Realtime)
+- **AI**: Google Gemini AI
+- **Animations**: Framer Motion
+- **State Management**: Zustand
 
-## Expanding the ESLint configuration
+## 📦 Local Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/wije51/CODM-Intel-.git
+   cd CODM-Intel-
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables:**
+   Create a `.env.local` file in the root and add:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_GEMINI_API_KEY=your_gemini_api_key
+   VITE_ERROR_EMAIL=your_email@example.com
+   ```
+
+4. **Run development server:**
+   ```bash
+   npm run dev
+   ```
+
+## 🛡️ Database Setup
+
+Create a `profiles`, `messages`, and `loadouts` table in Supabase. Detailed SQL schema can be found in the documentation artifacts.
+
+## 📝 License
+
+Built with ❤️ for the CODM Community.
