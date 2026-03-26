@@ -25,8 +25,7 @@ export default function SetupProfile() {
         { 
           id: session.user.id, 
           username: formData.username, 
-          gaming_uid: formData.gaming_uid,
-          updated_at: new Date().toISOString()
+          gaming_uid: formData.gaming_uid
         }
       ])
       .select()
